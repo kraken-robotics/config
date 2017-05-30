@@ -22,5 +22,5 @@ Two files will be created :
 - config.jar, containing the compiled code .class
 - config-sources.jar, containing the sources .java
 
-An example is available with the files [ConfigInfoExamples.java](https://raw.githubusercontent.com/PFGimenez/config/master/src/config/ConfigInfoExamples.java) and [config_example.ini](https://raw.githubusercontent.com/PFGimenez/config/master/config_example.ini).
+An example is available with the files [ConfigInfoExample.java](https://raw.githubusercontent.com/PFGimenez/config/master/src/config/ConfigInfoExample.java) and [config_example.ini](https://raw.githubusercontent.com/PFGimenez/config/master/config_example.ini).
 
