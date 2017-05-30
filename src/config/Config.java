@@ -23,6 +23,12 @@ public class Config
 	private boolean loadCompleted = false;
 	private ConfigInfo[] allConfigInfo = null;
 
+	/**
+	 * Constructor of Config
+	 * @param allConfigInfo
+	 * @param configfile
+	 * @param verbose
+	 */
 	public Config(ConfigInfo[] allConfigInfo, String configfile, boolean verbose)
 	{
 		this.allConfigInfo = allConfigInfo;
@@ -35,8 +41,8 @@ public class Config
 		}
 		catch(IOException e)
 		{
-			System.out.println("Configuration file from : " + System.getProperty("user.dir"));
-			System.out.println(e);
+			System.err.println("Configuration file from : " + System.getProperty("user.dir"));
+			System.err.println(e);
 			System.err.println("Configuration loading error. Default values loaded instead.");
 		}
 		completeConfig();
@@ -142,7 +148,10 @@ public class Config
 	 */
 	public String getString(ConfigInfo nom)
 	{
-		return properties.getProperty(nom.toString());
+		String o = properties.getProperty(nom.toString());
+		if(o == null)
+			System.err.println("Unknown ConfigInfo : " + nom);
+		return o;
 	}
 
 	private void printChangedValues()
