@@ -1,18 +1,12 @@
+import config.ConfigInfo;
+
 /*
  * Copyright (C) 2013-2017 Pierre-François Gimenez
  * Distributed under the MIT License.
  */
 
-package config;
-
 /**
- * Informations accessibles par la config
- * Les informations de config.ini surchargent celles-ci
- * Certaines valeurs sont constantes, ce qui signifie qu'elles ne peuvent être
- * modifiées dynamiquement au cours d'un match.
- * Chaque variable a une valeur par défaut, afin de pouvoir lancer le programme
- * sans config.ini.
- * 
+ * An example of ConfigInfo implementation
  * @author Pierre-François Gimenez
  *
  */
