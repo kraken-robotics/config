@@ -1,0 +1,5 @@
+language : java
+script :
+    - cd core && ant
+    - cd ../example && ant
+jdk : oraclejdk8

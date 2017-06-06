@@ -10,6 +10,8 @@ The configuration file must consist of ```key = value``` lines. Commentaries are
 
 ## Downloading / compiling
 
+[![Build Status](https://travis-ci.org/PFGimenez/config.svg?branch=master)](https://travis-ci.org/PFGimenez/config)
+
 You can find the latest compiled .jar here : https://github.com/PFGimenez/config/releases/download/latest/config.jar.
 
 Otherwise, you can compile it yourself. You will need a JDK and ```ant```.
