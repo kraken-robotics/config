@@ -2,4 +2,5 @@ language : java
 script :
     - cd core && ant
     - cd ../example && ant
+    - java -cp bin/:../core/config.jar Example
 jdk : oraclejdk8
