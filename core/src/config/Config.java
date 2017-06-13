@@ -23,6 +23,8 @@ public class Config
 	private boolean overloaded = false;
 	private boolean loadCompleted = false;
 	private ConfigInfo[] allConfigInfo = null;
+	private boolean verbose;
+	private String configfile;
 
 	/**
 	 * Constructor of Config
@@ -33,22 +35,9 @@ public class Config
 	public Config(ConfigInfo[] allConfigInfo, String configfile, boolean verbose)
 	{
 		this.allConfigInfo = allConfigInfo;
-		try
-		{
-			FileInputStream f = new FileInputStream(configfile);
-			properties.load(f);
-			f.close();
-			loadCompleted = true;
-		}
-		catch(IOException e)
-		{
-			System.err.println("Configuration file from : " + System.getProperty("user.dir"));
-			System.err.println(e);
-			System.err.println("Configuration loading error. Default values loaded instead.");
-		}
-		completeConfig();
-		if(verbose)
-			printChangedValues();
+		this.configfile = configfile;
+		this.verbose = verbose;
+		reload();
 	}
 
 	/**
@@ -181,7 +170,8 @@ public class Config
 					properties.setProperty(info.toString(), info.getDefaultValue().toString());
 				else if(!info.isMutable())
 				{
-					System.err.println(info + " can't be overloaded with the configuration file");
+//					if(verbose)
+//						System.err.println(info + " can't be overloaded with the configuration file");
 					properties.setProperty(info.toString(), info.getDefaultValue().toString());
 				}
 				else if(!info.getDefaultValue().equals(properties.getProperty(info.toString())))
@@ -210,6 +200,27 @@ public class Config
 			for(ConfigInfo info : allConfigInfo)
 				properties.setProperty(info.toString(), info.getDefaultValue().toString());
 		}
+	}
+	
+	/**
+	 * Reload the configuration
+	 */
+	public void reload()
+	{
+		try
+		{
+			FileInputStream f = new FileInputStream(configfile);
+			properties.load(f);
+			f.close();
+			loadCompleted = true;
+		}
+		catch(IOException e)
+		{
+			System.err.println("Configuration loading error from : " + System.getProperty("user.dir") + " : " + e+". Default values loaded instead.");
+		}
+		completeConfig();
+		if(verbose)
+			printChangedValues();
 	}
 
 }
