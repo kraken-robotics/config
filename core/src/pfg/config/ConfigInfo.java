@@ -3,7 +3,7 @@
  * Distributed under the MIT License.
  */
 
-package config;
+package pfg.config;
 
 /**
  * The ConfigInfo interface : each object is a configurable value.

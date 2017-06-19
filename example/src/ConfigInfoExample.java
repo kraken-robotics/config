@@ -1,4 +1,4 @@
-import config.ConfigInfo;
+import pfg.config.ConfigInfo;
 
 /*
  * Copyright (C) 2013-2017 Pierre-François Gimenez

@@ -3,7 +3,7 @@
  * Distributed under the MIT License.
  */
 
-package config;
+package pfg.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
