@@ -191,7 +191,7 @@ public class Config
 						found = true;
 						break;
 					}
-				if(!found)
+				if(!found && verbose)
 					System.err.println("Unknown " + cle + " configuration key !");
 			}
 		}

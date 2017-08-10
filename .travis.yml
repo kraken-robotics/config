@@ -4,3 +4,7 @@ script :
     - cd ../example && ant
     - java -cp bin/:../core/config.jar Example
 jdk : oraclejdk8
+notifications:
+    slack: intech-sudparis:Z3xKQEmZT2a9BFBqouokQ6J7
+    on_success: change
+    on_failure: always
