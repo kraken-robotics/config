@@ -27,10 +27,4 @@ public interface ConfigInfo
 	 */
 	public Object getDefaultValue();
 	
-	/**
-	 * This method must return "true" if the config manager is allowed to modified the default value
-	 * @return
-	 */
-	public boolean isMutable();
-	
 }

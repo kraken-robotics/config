@@ -22,11 +22,8 @@ public class Config
 {
 	private volatile Properties properties = new Properties();
 	private boolean overloaded = false;
-	private boolean loadCompleted = false;
 	private ConfigInfo[] allConfigInfo = null;
 	private boolean verbose;
-	private String configfile;
-	private HashMap<ConfigInfo, Object> override;
 
 	/**
 	 * Constructor of Config. No value overriding
@@ -38,43 +35,35 @@ public class Config
 		this(allConfigInfo, (String) null, verbose);
 	}
 	
-	
 	/**
-	 * Constructor of Config. The configuration is completed with the file
+	 * Constructor of Config with file.
 	 * @param allConfigInfo
 	 * @param configfile
 	 * @param verbose
 	 */
 	public Config(ConfigInfo[] allConfigInfo, String configfile, boolean verbose)
 	{
-		this(allConfigInfo, configfile, new HashMap<ConfigInfo, Object>(), verbose);
-	}
-	
-	/**
-	 * Constructor of Config. The configuration is completed with the HashMap
-	 * @param allConfigInfo
-	 * @param override
-	 * @param verbose
-	 */
-	public Config(ConfigInfo[] allConfigInfo, HashMap<ConfigInfo, Object> override, boolean verbose)
-	{
-		this(allConfigInfo, null, override, verbose);
-	}
-
-	/**
-	 * Constructor of Config with file and HashMap. The HashMap has an higher priority (it overrides the config file)
-	 * @param allConfigInfo
-	 * @param configfile
-	 * @param override
-	 * @param verbose
-	 */
-	public Config(ConfigInfo[] allConfigInfo, String configfile, HashMap<ConfigInfo, Object> override, boolean verbose)
-	{
 		this.allConfigInfo = allConfigInfo;
-		this.configfile = configfile;
 		this.verbose = verbose;
-		this.override = override;
-		reload();
+		
+		try
+		{
+			if(configfile != null)
+			{
+				FileInputStream f = new FileInputStream(configfile);
+				properties.load(f);
+				f.close();
+			}
+		}
+		catch(IOException e)
+		{
+			if(verbose)
+				System.err.println("Configuration loading error from : " + System.getProperty("user.dir") + " : " + e.getMessage()+". Default values loaded instead.");
+		}
+		
+		boolean overloaded = completeConfig();
+		if(verbose && overloaded)
+			printChangedValues();
 	}
 	
 	/**
@@ -183,87 +172,57 @@ public class Config
 
 	private void printChangedValues()
 	{
-		if(overloaded)
-		{
-			System.out.println("Delta configuration :");
-			for(ConfigInfo info : allConfigInfo)
-				if(!info.getDefaultValue().toString().equals(getString(info)))
-					System.out.println(info + " = " + getString(info));
-		}
-		else
-			System.out.println("No overloaded configuration");
+		System.out.println("Delta configuration :");
+		for(ConfigInfo info : allConfigInfo)
+			if(!info.getDefaultValue().toString().equals(getString(info)))
+				System.out.println("  " + info + " = " + getString(info) + " (default : "+info.getDefaultValue()+")");
 	}
 
 	/**
 	 * Complete the configuration file with the default values
 	 */
-	private void completeConfig()
+	private boolean completeConfig()
 	{
-		if(loadCompleted)
+		for(ConfigInfo info : allConfigInfo)
 		{
-			for(ConfigInfo info : allConfigInfo)
-			{
-				if(!properties.containsKey(info.toString()))
-					properties.setProperty(info.toString(), info.getDefaultValue().toString());
-				else if(!info.isMutable())
-				{
-//					if(verbose)
-//						System.err.println(info + " can't be overloaded with the configuration file");
-					properties.setProperty(info.toString(), info.getDefaultValue().toString());
-				}
-				Object val = override.get(info);
-				if(val != null)
-					properties.setProperty(info.toString(), val.toString());
-				else if(!info.getDefaultValue().equals(properties.getProperty(info.toString())))
-					overloaded = true;
-			}
-			for(String cle : properties.stringPropertyNames())
-			{
-				if(cle.contains("#"))
-				{
-					properties.remove(cle);
-					continue;
-				}
-				boolean found = false;
-				for(ConfigInfo info : allConfigInfo)
-					if(info.toString().compareTo(cle) == 0)
-					{
-						found = true;
-						break;
-					}
-				if(!found && verbose)
-					System.err.println("Unknown " + cle + " configuration key !");
-			}
-		}
-		else
-		{
-			for(ConfigInfo info : allConfigInfo)
+			if(!properties.containsKey(info.toString()))
 				properties.setProperty(info.toString(), info.getDefaultValue().toString());
+			
+			if(!info.getDefaultValue().equals(properties.getProperty(info.toString())))
+				overloaded = true;
 		}
+		for(String cle : properties.stringPropertyNames())
+		{
+			cle = cle.trim();
+			if(cle.startsWith("#")) // It's a commentary, it is ignored
+				continue;
+
+			boolean found = false;
+			for(ConfigInfo info : allConfigInfo)
+				if(info.toString().equals(cle))
+				{
+					found = true;
+					break;
+				}
+			if(!found && verbose)
+				System.err.println("Unknown " + cle + " configuration key !");
+		}
+		return overloaded;
 	}
 	
 	/**
-	 * Reload the configuration
+	 * Override some values
+	 * @param override
 	 */
-	public void reload()
+	public void override(HashMap<ConfigInfo, Object> override)
 	{
-		try
-		{
-			if(configfile != null)
-			{
-				FileInputStream f = new FileInputStream(configfile);
-				properties.load(f);
-				f.close();
-			}
-			loadCompleted = true;
-		}
-		catch(IOException e)
-		{
-			System.err.println("Configuration loading error from : " + System.getProperty("user.dir") + " : " + e+". Default values loaded instead.");
-		}
-		completeConfig();
-		if(verbose)
-			printChangedValues();
+		if(override != null)
+			for(ConfigInfo info : allConfigInfo)
+				if(override.containsKey(info))
+				{
+					Object val = override.get(info);
+					properties.setProperty(info.toString(), val == null ? null : val.toString());
+				}
 	}
-
+	
 }

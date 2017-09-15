@@ -30,19 +30,13 @@ public enum ConfigInfoExample implements ConfigInfo
 		this.defaultValue = defaultValue;
 	}
 
+	/**
+	 * Just a getter
+	 */
 	@Override
 	public Object getDefaultValue()
 	{
 		return defaultValue;
-	}
-
-	/**
-	 * For this simple example, every value can be mutated by the configuration file
-	 */
-	@Override
-	public boolean isMutable()
-	{
-		return true;
 	}
 	
 	/**
