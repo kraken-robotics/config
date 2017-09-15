@@ -20,23 +20,22 @@ import java.util.Properties;
  */
 public class Config
 {
-	private volatile Properties properties = new Properties();
-	private boolean overloaded = false;
+	private HashMap<ConfigInfo, Object> configValues = new HashMap<ConfigInfo, Object>();
 	private ConfigInfo[] allConfigInfo = null;
 	private boolean verbose;
 
 	/**
-	 * Constructor of Config. No value overriding
+	 * Constructor of Config. No config file.
 	 * @param allConfigInfo
 	 * @param verbose
 	 */
 	public Config(ConfigInfo[] allConfigInfo, boolean verbose)
 	{
-		this(allConfigInfo, (String) null, verbose);
+		this(allConfigInfo, null, verbose);
 	}
 	
 	/**
-	 * Constructor of Config with file.
+	 * Constructor of Config with a config file.
 	 * @param allConfigInfo
 	 * @param configfile
 	 * @param verbose
@@ -46,13 +45,46 @@ public class Config
 		this.allConfigInfo = allConfigInfo;
 		this.verbose = verbose;
 		
+		if(configfile != null)
+			readConfigFile(configfile);
+		
+		boolean overloaded = completeConfig();
+		if(verbose && overloaded)
+			printChangedValues();
+	}
+	
+	/**
+	 * Put the content of the config file into the HashMap
+	 * @param configfile
+	 */
+	private void readConfigFile(String configfile)
+	{
+		assert configfile != null;
 		try
 		{
-			if(configfile != null)
+			Properties properties = new Properties();
+			FileInputStream f = new FileInputStream(configfile);
+			properties.load(f);
+			f.close();
+			
+			for(String cle : properties.stringPropertyNames())
 			{
-				FileInputStream f = new FileInputStream(configfile);
-				properties.load(f);
-				f.close();
+				String trimedCle = cle.trim();
+				if(trimedCle.startsWith("#")) // It's a commentary, ignore it
+					continue;
+
+				ConfigInfo foundInfo = null;
+				for(ConfigInfo info : allConfigInfo)
+					if(info.toString().equals(cle))
+					{
+						foundInfo = info;
+						break;
+					}
+				if(foundInfo == null && verbose)
+					System.err.println("Unknown " + trimedCle + " configuration key !");
+				
+				else if(foundInfo != null)
+					configValues.put(foundInfo, properties.get(cle));
 			}
 		}
 		catch(IOException e)
@@ -60,10 +92,16 @@ public class Config
 			if(verbose)
 				System.err.println("Configuration loading error from : " + System.getProperty("user.dir") + " : " + e.getMessage()+". Default values loaded instead.");
 		}
-		
-		boolean overloaded = completeConfig();
-		if(verbose && overloaded)
-			printChangedValues();
+	}
+	
+	/**
+	 * Return an Object
+	 * @param nom
+	 * @return
+	 */
+	public Object getObject(ConfigInfo nom)
+	{
+		return configValues.get(nom);
 	}
 	
 	/**
@@ -142,7 +180,7 @@ public class Config
 	}
 
 	/**
-	 * Récupère un double de la config
+	 * Get a double
 	 * 
 	 * @param nom
 	 * @return
@@ -157,25 +195,26 @@ public class Config
 	}
 
 	/**
-	 * Méthode de récupération des paramètres de configuration
+	 * Get a String
 	 * 
 	 * @param nom
 	 * @return
 	 */
 	public String getString(ConfigInfo nom)
 	{
-		String o = properties.getProperty(nom.toString());
-		if(o == null)
-			System.err.println("Unknown ConfigInfo : " + nom);
-		return o;
+		Object ob = configValues.get(nom);
+		return ob == null ? null : ob.toString();
 	}
 
-	private void printChangedValues()
+	/**
+	 * Print the difference between the current config and the default values
+	 */
+	public void printChangedValues()
 	{
-		System.out.println("Delta configuration :");
+		System.out.println("Configuration diff :");
 		for(ConfigInfo info : allConfigInfo)
-			if(!info.getDefaultValue().toString().equals(getString(info)))
-				System.out.println("  " + info + " = " + getString(info) + " (default : "+info.getDefaultValue()+")");
+			if(!info.getDefaultValue().equals(configValues.get(info)))
+				System.out.println("  " + info + " = " + configValues.get(info) + " (default : "+info.getDefaultValue()+")");
 	}
 
 	/**
@@ -183,30 +222,19 @@ public class Config
 	 */
 	private boolean completeConfig()
 	{
+		boolean overloaded = false;
 		for(ConfigInfo info : allConfigInfo)
 		{
-			if(!properties.containsKey(info.toString()))
-				properties.setProperty(info.toString(), info.getDefaultValue().toString());
+			/*
+			 * If the value exists, it comes from the file, which has the overriding priority
+			 */
+			if(!configValues.containsKey(info))
+				configValues.put(info, info.getDefaultValue());
 			
-			if(!info.getDefaultValue().equals(properties.getProperty(info.toString())))
+			if(!info.getDefaultValue().equals(configValues.get(info)))
 				overloaded = true;
 		}
-		for(String cle : properties.stringPropertyNames())
-		{
-			cle = cle.trim();
-			if(cle.startsWith("#")) // It's a commentary, it is ignored
-				continue;
 
-			boolean found = false;
-			for(ConfigInfo info : allConfigInfo)
-				if(info.toString().equals(cle))
-				{
-					found = true;
-					break;
-				}
-			if(!found && verbose)
-				System.err.println("Unknown " + cle + " configuration key !");
-		}
 		return overloaded;
 	}
 	
@@ -216,13 +244,19 @@ public class Config
 	 */
 	public void override(HashMap<ConfigInfo, Object> override)
 	{
-		if(override != null)
-			for(ConfigInfo info : allConfigInfo)
-				if(override.containsKey(info))
-				{
-					Object val = override.get(info);
-					properties.setProperty(info.toString(), val == null ? null : val.toString());
-				}
+		for(ConfigInfo key : override.keySet())
+			configValues.put(key, override.get(key));
+	}
+	
+	/**
+	 * Override a value
+	 * @param key
+	 * @param newValue
+	 */
+	public void override(ConfigInfo key, Object newValue)
+	{
+		if(key != null)
+			configValues.put(key, newValue);
 	}
 	
 }
