@@ -7,6 +7,7 @@ package pfg.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -25,21 +26,57 @@ public class Config
 	private ConfigInfo[] allConfigInfo = null;
 	private boolean verbose;
 	private String configfile;
+	private HashMap<ConfigInfo, Object> override;
 
 	/**
-	 * Constructor of Config
+	 * Constructor of Config. No value overriding
+	 * @param allConfigInfo
+	 * @param verbose
+	 */
+	public Config(ConfigInfo[] allConfigInfo, boolean verbose)
+	{
+		this(allConfigInfo, (String) null, verbose);
+	}
+	
+	
+	/**
+	 * Constructor of Config. The configuration is completed with the file
 	 * @param allConfigInfo
 	 * @param configfile
 	 * @param verbose
 	 */
 	public Config(ConfigInfo[] allConfigInfo, String configfile, boolean verbose)
 	{
+		this(allConfigInfo, configfile, new HashMap<ConfigInfo, Object>(), verbose);
+	}
+	
+	/**
+	 * Constructor of Config. The configuration is completed with the HashMap
+	 * @param allConfigInfo
+	 * @param override
+	 * @param verbose
+	 */
+	public Config(ConfigInfo[] allConfigInfo, HashMap<ConfigInfo, Object> override, boolean verbose)
+	{
+		this(allConfigInfo, null, override, verbose);
+	}
+
+	/**
+	 * Constructor of Config with file and HashMap. The HashMap has an higher priority (it overrides the config file)
+	 * @param allConfigInfo
+	 * @param configfile
+	 * @param override
+	 * @param verbose
+	 */
+	public Config(ConfigInfo[] allConfigInfo, String configfile, HashMap<ConfigInfo, Object> override, boolean verbose)
+	{
 		this.allConfigInfo = allConfigInfo;
 		this.configfile = configfile;
 		this.verbose = verbose;
+		this.override = override;
 		reload();
 	}
-
+	
 	/**
 	 * Get an integer
 	 * 
@@ -174,6 +211,9 @@ public class Config
 //						System.err.println(info + " can't be overloaded with the configuration file");
 					properties.setProperty(info.toString(), info.getDefaultValue().toString());
 				}
+				Object val = override.get(info);
+				if(val != null)
+					properties.setProperty(info.toString(), val.toString());
 				else if(!info.getDefaultValue().equals(properties.getProperty(info.toString())))
 					overloaded = true;
 			}
@@ -209,9 +249,12 @@ public class Config
 	{
 		try
 		{
-			FileInputStream f = new FileInputStream(configfile);
-			properties.load(f);
-			f.close();
+			if(configfile != null)
+			{
+				FileInputStream f = new FileInputStream(configfile);
+				properties.load(f);
+				f.close();
+			}
 			loadCompleted = true;
 		}
 		catch(IOException e)
