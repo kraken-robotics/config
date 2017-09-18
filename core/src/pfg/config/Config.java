@@ -5,10 +5,12 @@
 
 package pfg.config;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Properties;
+
+import org.ini4j.Ini;
+import org.ini4j.Profile.Section;
 
 /**
  * The configuration values are located in two places.
@@ -31,7 +33,7 @@ public class Config
 	 */
 	public Config(ConfigInfo[] allConfigInfo, boolean verbose)
 	{
-		this(allConfigInfo, null, verbose);
+		this(allConfigInfo, null, null, verbose);
 	}
 	
 	/**
@@ -40,13 +42,13 @@ public class Config
 	 * @param configfile
 	 * @param verbose
 	 */
-	public Config(ConfigInfo[] allConfigInfo, String configfile, boolean verbose)
+	public Config(ConfigInfo[] allConfigInfo, String configfile, String profile, boolean verbose)
 	{
 		this.allConfigInfo = allConfigInfo;
 		this.verbose = verbose;
 		
 		if(configfile != null)
-			readConfigFile(configfile);
+			readConfigFile(configfile, profile);
 		
 		boolean overloaded = completeConfig();
 		if(verbose && overloaded)
@@ -57,34 +59,24 @@ public class Config
 	 * Put the content of the config file into the HashMap
 	 * @param configfile
 	 */
-	private void readConfigFile(String configfile)
+	private void readConfigFile(String configfile, String profile)
 	{
 		assert configfile != null;
 		try
 		{
-			Properties properties = new Properties();
-			FileInputStream f = new FileInputStream(configfile);
-			properties.load(f);
-			f.close();
-			
-			for(String cle : properties.stringPropertyNames())
+			Ini inifile = new Ini(new File(configfile));
+			Section s = inifile.get(profile);
+			if(s == null)
 			{
-				String trimedCle = cle.trim();
-				if(trimedCle.startsWith("#")) // It's a commentary, ignore it
-					continue;
-
-				ConfigInfo foundInfo = null;
-				for(ConfigInfo info : allConfigInfo)
-					if(info.toString().equals(cle))
-					{
-						foundInfo = info;
-						break;
-					}
-				if(foundInfo == null && verbose)
-					System.err.println("Unknown " + trimedCle + " configuration key !");
-				
-				else if(foundInfo != null)
-					configValues.put(foundInfo, properties.get(cle));
+				System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
+				return;
+			}
+			
+			for(ConfigInfo info : allConfigInfo)
+			{
+				Object o = s.get(info.toString());
+				if(o != null)
+					configValues.put(info, o);
 			}
 		}
 		catch(IOException e)
@@ -119,6 +111,12 @@ public class Config
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <S> S get(ConfigInfo nom, Class<S> classe)
+	{
+		return (S) configValues.get(nom);
+	}
+	
 	/**
 	 * Get a short
 	 * 

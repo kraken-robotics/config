@@ -22,7 +22,7 @@ public class Example
 		/*
 		 * The config file is "config_example.ini"
 		 */
-		Config config = new Config(ConfigInfoExample.values(), "config_example.ini", true);
+		Config config = new Config(ConfigInfoExample.values(), "config_example.ini", "example", true);
 				
 		/*
 		 * There are several getters depending on the type of the variable
