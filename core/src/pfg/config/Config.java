@@ -65,7 +65,7 @@ public class Config
 		try
 		{
 			Ini inifile = new Ini(new File(configfile));
-			Section s = inifile.get(profile);
+			Section s = (Section) inifile.get(profile);
 			if(s == null)
 			{
 				System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
