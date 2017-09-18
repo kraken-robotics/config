@@ -25,6 +25,7 @@
             <jar destfile="config.jar">
                 <fileset dir="bin" />
                 <fileset dir="src" />
+                <zipgroupfileset dir="lib" />
             </jar>
     </target>
     <target name="build-subprojects"/>
