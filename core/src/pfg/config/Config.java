@@ -7,7 +7,9 @@ package pfg.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
@@ -33,22 +35,36 @@ public class Config
 	 */
 	public Config(ConfigInfo[] allConfigInfo, boolean verbose)
 	{
-		this(allConfigInfo, null, null, verbose);
+		this(allConfigInfo, null, (List<String>) null, verbose);
+	}
+	
+	/**
+	 * Constructor of Config with a config file and a profile
+	 * @param allConfigInfo
+	 * @param configfile
+	 * @param profile
+	 * @param verbose
+	 */
+	public Config(ConfigInfo[] allConfigInfo, String configfile, String profile, boolean verbose)
+	{
+		this(allConfigInfo, configfile, Arrays.asList(profile), verbose);
 	}
 	
 	/**
 	 * Constructor of Config with a config file.
+	 * The last profiles override the first profiles
 	 * @param allConfigInfo
 	 * @param configfile
+	 * @param profiles
 	 * @param verbose
 	 */
-	public Config(ConfigInfo[] allConfigInfo, String configfile, String profile, boolean verbose)
+	public Config(ConfigInfo[] allConfigInfo, String configfile, List<String> profiles, boolean verbose)
 	{
 		this.allConfigInfo = allConfigInfo;
 		this.verbose = verbose;
 		
 		if(configfile != null)
-			readConfigFile(configfile, profile);
+			readConfigFile(configfile, profiles);
 		
 		boolean overloaded = completeConfig();
 		if(verbose && overloaded)
@@ -59,24 +75,27 @@ public class Config
 	 * Put the content of the config file into the HashMap
 	 * @param configfile
 	 */
-	private void readConfigFile(String configfile, String profile)
+	private void readConfigFile(String configfile, List<String> profiles)
 	{
 		assert configfile != null;
 		try
 		{
 			Ini inifile = new Ini(new File(configfile));
-			Section s = (Section) inifile.get(profile);
-			if(s == null)
+			for(String profile : profiles)
 			{
-				System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
-				return;
-			}
-			
-			for(ConfigInfo info : allConfigInfo)
-			{
-				Object o = s.get(info.toString());
-				if(o != null)
-					configValues.put(info, o);
+				Section s = (Section) inifile.get(profile);
+				if(s == null)
+				{
+					System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
+					continue;
+				}
+				
+				for(ConfigInfo info : allConfigInfo)
+				{
+					Object o = s.get(info.toString());
+					if(o != null)
+						configValues.put(info, o);
+				}
 			}
 		}
 		catch(IOException e)
