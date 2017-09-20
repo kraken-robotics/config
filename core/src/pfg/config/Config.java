@@ -7,9 +7,7 @@ package pfg.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
@@ -35,19 +33,7 @@ public class Config
 	 */
 	public Config(ConfigInfo[] allConfigInfo, boolean verbose)
 	{
-		this(allConfigInfo, null, (List<String>) null, verbose);
-	}
-	
-	/**
-	 * Constructor of Config with a config file and a profile
-	 * @param allConfigInfo
-	 * @param configfile
-	 * @param profile
-	 * @param verbose
-	 */
-	public Config(ConfigInfo[] allConfigInfo, String configfile, String profile, boolean verbose)
-	{
-		this(allConfigInfo, configfile, Arrays.asList(profile), verbose);
+		this(allConfigInfo, verbose, null);
 	}
 	
 	/**
@@ -58,7 +44,7 @@ public class Config
 	 * @param profiles
 	 * @param verbose
 	 */
-	public Config(ConfigInfo[] allConfigInfo, String configfile, List<String> profiles, boolean verbose)
+	public Config(ConfigInfo[] allConfigInfo, boolean verbose, String configfile, String... profiles)
 	{
 		this.allConfigInfo = allConfigInfo;
 		this.verbose = verbose;
@@ -75,28 +61,31 @@ public class Config
 	 * Put the content of the config file into the HashMap
 	 * @param configfile
 	 */
-	private void readConfigFile(String configfile, List<String> profiles)
+	private void readConfigFile(String configfile, String[] profiles)
 	{
 		assert configfile != null;
 		try
 		{
 			Ini inifile = new Ini(new File(configfile));
-			for(String profile : profiles)
-			{
-				Section s = (Section) inifile.get(profile);
-				if(s == null)
+			if(profiles != null && profiles.length > 0)
+				for(String profile : profiles)
 				{
-					System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
-					continue;
+					Section s = (Section) inifile.get(profile);
+					if(s == null)
+					{
+						System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
+						continue;
+					}
+					
+					for(ConfigInfo info : allConfigInfo)
+					{
+						Object o = s.get(info.toString());
+						if(o != null)
+							configValues.put(info, o);
+					}
 				}
-				
-				for(ConfigInfo info : allConfigInfo)
-				{
-					Object o = s.get(info.toString());
-					if(o != null)
-						configValues.put(info, o);
-				}
-			}
+			else if(verbose)
+				System.err.println("No profile given : the config file can't be read.");
 		}
 		catch(IOException e)
 		{
@@ -130,10 +119,15 @@ public class Config
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <S> S get(ConfigInfo nom, Class<S> classe)
+	/**
+	 * Get an object cast to a certain class
+	 * @param nom
+	 * @param clazz
+	 * @return
+	 */
+	public <S> S get(ConfigInfo nom, Class<S> clazz)
 	{
-		return (S) configValues.get(nom);
+		return clazz.cast(configValues.get(nom));
 	}
 	
 	/**
@@ -190,10 +184,9 @@ public class Config
 	public Boolean getBoolean(ConfigInfo nom)
 	{
 		String s = getString(nom);
-		if(s == null)
-			return null;
-		
-		return Boolean.parseBoolean(s);
+		if(s != null)
+			return Boolean.parseBoolean(s);
+		return null;
 	}
 
 	/**
@@ -256,7 +249,7 @@ public class Config
 	}
 	
 	/**
-	 * Override some values
+	 * Override some values with a HashMap
 	 * @param override
 	 */
 	public void override(HashMap<ConfigInfo, Object> override)

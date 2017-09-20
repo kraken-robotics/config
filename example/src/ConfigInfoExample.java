@@ -13,7 +13,6 @@ import pfg.config.ConfigInfo;
 
 public enum ConfigInfoExample implements ConfigInfo
 {
-	
 	SOME_INTEGER_VALUE(1337),
 	SOME_DOUBLE_VALUE(255.42),
 	SOME_STRING_VALUE("default-value"),
