@@ -20,6 +20,8 @@ public class Example
 		scenario2();
 		System.out.println("\n");
 		scenario3();
+		System.out.println("\n");
+		scenario4();
 	}
 	
 	/**
@@ -82,6 +84,16 @@ public class Example
 		
 		int valInteger = config.getInt(ConfigInfoExample.SOME_INTEGER_VALUE);
 		System.out.println("The integer value has been overridden with the profile \"example\" : " + valInteger);
+	}
+
+	public static void scenario4()
+	{
+		System.out.println("PROFILE : DEFAULT + ERROR");
+		
+		Config config = new Config(ConfigInfoExample.values(), true, "config_example.ini", "default", "error");
+		
+		int valInteger = config.getInt(ConfigInfoExample.SOME_INTEGER_VALUE);
+		System.out.println("The integer value hasn't been overridden with the profile \"error\" because of an format error : "+valInteger);
 	}
 
 }

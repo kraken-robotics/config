@@ -113,9 +113,15 @@ public class Config
 	 */
 	public Integer getInt(ConfigInfo nom) throws NumberFormatException
 	{
-		String s = getString(nom);
-		if(s != null)
-			return Integer.parseInt(s);
+		try {
+			String s = getString(nom);
+			if(s != null)
+				return Integer.parseInt(s);
+		} catch(NumberFormatException e)
+		{
+			System.err.println(e);
+			return Integer.parseInt(nom.getDefaultValue().toString());
+		}
 		return null;
 	}
 
@@ -139,9 +145,15 @@ public class Config
 	 */
 	public Short getShort(ConfigInfo nom) throws NumberFormatException
 	{
-		String s = getString(nom);
-		if(s != null)
-			return Short.parseShort(s);
+		try {
+			String s = getString(nom);
+			if(s != null)
+				return Short.parseShort(s);
+		} catch(NumberFormatException e)
+		{
+			System.err.println(e);
+			return Short.parseShort(nom.getDefaultValue().toString());
+		}
 		return null;
 	}
 
@@ -154,10 +166,15 @@ public class Config
 	 */
 	public Byte getByte(ConfigInfo nom) throws NumberFormatException
 	{
-		String s = getString(nom);
-		if(s != null)
-			return Byte.parseByte(s);
-		return null;
+		try {
+			String s = getString(nom);
+			if(s != null)
+				return Byte.parseByte(s);
+		} catch(NumberFormatException e)
+		{
+			System.err.println(e);
+			return Byte.parseByte(nom.getDefaultValue().toString());
+		}		return null;
 	}
 
 	/**
@@ -169,9 +186,15 @@ public class Config
 	 */
 	public Long getLong(ConfigInfo nom) throws NumberFormatException
 	{
-		String s = getString(nom);
-		if(s != null)
-			return Long.parseLong(s);
+		try {
+			String s = getString(nom);
+			if(s != null)
+				return Long.parseLong(s);
+		} catch(NumberFormatException e)
+		{
+			System.err.println(e);
+			return Long.parseLong(nom.getDefaultValue().toString());
+		}
 		return null;
 	}
 
@@ -198,9 +221,15 @@ public class Config
 	 */
 	public Double getDouble(ConfigInfo nom) throws NumberFormatException
 	{
-		String s = getString(nom);
-		if(s != null)
-			return Double.parseDouble(s);
+		try {
+			String s = getString(nom);
+			if(s != null)
+				return Double.parseDouble(s);
+		} catch(NumberFormatException e)
+		{
+			System.err.println(e);
+			return Double.parseDouble(nom.getDefaultValue().toString());
+		}
 		return null;
 	}
 
