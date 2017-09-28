@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
@@ -82,16 +81,20 @@ public class Config
 						continue;
 					}
 					
-					Set<String> keys = s.keySet();
-					for(ConfigInfo info : allConfigInfo)
+					for(String st : s.keySet())
 					{
-						Object o = s.get(info.toString());
-						keys.remove(info.toString());
-						if(o != null)
-							configValues.put(info, o);
+						boolean ok = false;
+						for(ConfigInfo info : allConfigInfo)
+							if(info.toString().toLowerCase().equals(st.toLowerCase()))
+							{
+								configValues.put(info, s.get(st));
+								ok = true;
+								break;
+							}
+						if(!ok)
+							System.err.println("Unknown key : "+st);
 					}
-					for(String name : keys)
-						System.err.println("Unknown key : "+name);
+					
 				}
 			else if(verbose)
 				System.err.println("No profile given : the config file can't be read.");
