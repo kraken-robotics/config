@@ -7,7 +7,9 @@ package pfg.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.ini4j.Ini;
@@ -24,7 +26,7 @@ import org.ini4j.Profile.Section;
 public class Config
 {
 	private HashMap<ConfigInfo, Object> configValues = new HashMap<ConfigInfo, Object>();
-	private ConfigInfo[] allConfigInfo = null;
+	private List<ConfigInfo> allConfigInfo = new ArrayList<ConfigInfo>();
 	private boolean verbose;
 
 	/**
@@ -47,7 +49,9 @@ public class Config
 	 */
 	public Config(ConfigInfo[] allConfigInfo, boolean verbose, String configfile, String... profiles)
 	{
-		this.allConfigInfo = allConfigInfo;
+		for(ConfigInfo info : allConfigInfo)
+			this.allConfigInfo.add(info);
+
 		this.verbose = verbose;
 		
 		if(configfile != null)
@@ -106,6 +110,7 @@ public class Config
 	 */
 	public Object getObject(ConfigInfo nom)
 	{
+		assert allConfigInfo.contains(nom) : "Unknown configuration key ! "+nom;
 		return configValues.get(nom);
 	}
 	
@@ -138,6 +143,7 @@ public class Config
 	 */
 	public <S> S get(ConfigInfo nom, Class<S> clazz)
 	{
+		assert allConfigInfo.contains(nom) : "Unknown configuration key ! "+nom;
 		return clazz.cast(configValues.get(nom));
 	}
 	
@@ -246,6 +252,7 @@ public class Config
 	 */
 	public String getString(ConfigInfo nom)
 	{
+		assert allConfigInfo.contains(nom) : "Unknown configuration key ! "+nom;
 		Object ob = configValues.get(nom);
 		return ob == null ? null : ob.toString();
 	}
@@ -289,7 +296,10 @@ public class Config
 	public void override(HashMap<ConfigInfo, Object> override)
 	{
 		for(ConfigInfo key : override.keySet())
+		{
+			assert allConfigInfo.contains(key) : "Unknown configuration key ! "+key;
 			configValues.put(key, override.get(key));
+		}
 	}
 	
 	/**
@@ -300,7 +310,10 @@ public class Config
 	public void override(ConfigInfo key, Object newValue)
 	{
 		if(key != null)
+		{
+			assert allConfigInfo.contains(key) : "Unknown configuration key ! "+key;
 			configValues.put(key, newValue);
+		}
 	}
 	
 }
