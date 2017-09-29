@@ -80,12 +80,12 @@ public class Config
 						System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
 						continue;
 					}
-					
-					for(String st : s.keySet())
+
+					for(Object st : s.keySet())
 					{
 						boolean ok = false;
 						for(ConfigInfo info : allConfigInfo)
-							if(info.toString().toLowerCase().equals(st.toLowerCase()))
+							if(info.toString().toLowerCase().equals(st.toString().toLowerCase()))
 							{
 								configValues.put(info, s.get(st));
 								ok = true;
