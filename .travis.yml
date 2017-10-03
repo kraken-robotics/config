@@ -1,8 +1,5 @@
 language : java
-script :
-    - cd core && ant
-    - cd ../example && ant
-    - java -cp bin/:../core/config.jar Example
+script : mvn install
 jdk : oraclejdk8
 notifications:
     slack: intech-sudparis:Z3xKQEmZT2a9BFBqouokQ6J7

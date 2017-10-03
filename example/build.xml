@@ -7,7 +7,7 @@
     <property name="junit.output.dir" value="junit"/>
     <path id="Config.classpath">
         <pathelement location="bin"/>
-	<pathelement location="../core/config.jar"/>
+	<pathelement location="../target/config-1.2.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
