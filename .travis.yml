@@ -4,7 +4,10 @@ install :
     - cd dependency-injector
     - mvn install
     - cd ../core
-script : mvn install
+script :
+    - mvn install
+    - cd ../example
+    - ant
 jdk : oraclejdk8
 notifications:
     slack: intech-sudparis:Z3xKQEmZT2a9BFBqouokQ6J7
