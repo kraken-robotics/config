@@ -8,7 +8,7 @@
     <path id="Config-example.classpath">
         <pathelement location="bin"/>
         <pathelement location="../core/target/config-1.2.jar"/>
-        <pathelement location="~/.m2/repository/org/ini4j/ini4j/0.5.4/ini4j-0.5.4.jar"/>
+        <pathelement location="${user.home}/.m2/repository/org/ini4j/ini4j/0.5.4/ini4j-0.5.4.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
