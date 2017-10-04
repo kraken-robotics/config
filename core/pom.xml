@@ -20,15 +20,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>pfg.injector</groupId>
-      <artifactId>dependency-injector</artifactId>
-      <version>1.1</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.ini4j</groupId>
       <artifactId>ini4j</artifactId>
-      <version>0.5.1</version>
+      <version>0.5.4</version>
     </dependency>
 
   </dependencies>

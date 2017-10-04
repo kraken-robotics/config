@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-    <project basedir="." default="build" name="Config">
+    <project basedir="." default="build" name="Config-example">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
     <property name="junit.output.dir" value="junit"/>
-    <path id="Config.classpath">
+    <path id="Config-example.classpath">
         <pathelement location="bin"/>
-	<pathelement location="../target/config-1.2.jar"/>
+        <pathelement location="../core/target/config-1.2.jar"/>
+        <pathelement location="~/.m2/repository/org/ini4j/ini4j/0.5.4/ini4j-0.5.4.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -27,7 +28,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
-            <classpath refid="Config.classpath"/>
+            <classpath refid="Config-example.classpath"/>
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>

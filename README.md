@@ -17,7 +17,7 @@ You can find the latest compiled .jar here : https://github.com/PFGimenez/config
 Otherwise, you can compile it yourself. You will need a JDK and maven.
 
     $ git clone https://github.com/PFGimenez/config.git --depth 1
-    $ cd config
+    $ cd config/core
     $ mvn install
 
 The jar file will be located in the `target` directory.

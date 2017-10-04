@@ -3,6 +3,7 @@ install :
     - git clone https://github.com/PFGimenez/dependency-injector.git --depth 1
     - cd dependency-injector
     - mvn install
+    - cd ../core
 script : mvn install
 jdk : oraclejdk8
 notifications:
