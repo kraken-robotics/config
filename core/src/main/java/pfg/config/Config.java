@@ -16,7 +16,7 @@ import org.ini4j.Profile.Section;
 
 /**
  * The configuration values are located in two places.
- * The ConfigInfo must provide a default value. A configuration file can overload this value.
+ * The ConfigInfo enum provides default values. A configuration file can overload these values.
  * The point of the configuration file is to change the configuration without recompiling.
  * 
  * @author Pierre-François Gimenez
@@ -35,7 +35,20 @@ public class Config
 	 */
 	public Config(ConfigInfo[] allConfigInfo, boolean verbose)
 	{
-		this(allConfigInfo, verbose, null);
+		this(allConfigInfo, verbose, null, (String) null);
+	}
+	
+	/**
+	 * If you provide a config filename, you should provide at least one profile.
+	 * DON'T USE this constructor !
+	 * @param allConfigInfo
+	 * @param verbose
+	 * @param configfile
+	 */
+	@Deprecated
+	public Config(ConfigInfo[] allConfigInfo, boolean verbose, String configfile)
+	{
+		throw new IllegalArgumentException("Please provide at least one profile !");
 	}
 	
 	/**
@@ -67,7 +80,6 @@ public class Config
 	 */
 	private void readConfigFile(String configfile, String[] profiles)
 	{
-		assert configfile != null;
 		try
 		{
 			Ini inifile = new Ini(new File(configfile));
@@ -96,8 +108,8 @@ public class Config
 					}
 					
 				}
-			else if(verbose)
-				System.err.println("No profile given : the config file can't be read.");
+			else
+				throw new IllegalArgumentException("Please provide at least one profile !");
 		}
 		catch(IOException e)
 		{
@@ -113,7 +125,8 @@ public class Config
 	 */
 	public Object getObject(ConfigInfo nom)
 	{
-		assert allConfigInfo.contains(nom) : "Unknown configuration key ! "+nom;
+		if(!allConfigInfo.contains(nom))
+			throw new IllegalArgumentException("Unknown configuration key : "+nom);
 		return configValues.get(nom);
 	}
 	
@@ -146,7 +159,8 @@ public class Config
 	 */
 	public <S> S get(ConfigInfo nom, Class<S> clazz)
 	{
-		assert allConfigInfo.contains(nom) : "Unknown configuration key ! "+nom;
+		if(!allConfigInfo.contains(nom))
+			throw new IllegalArgumentException("Unknown configuration key : "+nom);
 		return clazz.cast(configValues.get(nom));
 	}
 	
@@ -255,7 +269,8 @@ public class Config
 	 */
 	public String getString(ConfigInfo nom)
 	{
-		assert allConfigInfo.contains(nom) : "Unknown configuration key ! "+nom;
+		if(!allConfigInfo.contains(nom))
+			throw new IllegalArgumentException("Unknown configuration key : "+nom);
 		Object ob = configValues.get(nom);
 		return ob == null ? null : ob.toString();
 	}
@@ -300,7 +315,8 @@ public class Config
 	{
 		for(ConfigInfo key : override.keySet())
 		{
-			assert allConfigInfo.contains(key) : "Unknown configuration key ! "+key;
+			if(!allConfigInfo.contains(key))
+				throw new IllegalArgumentException("Unknown configuration key : "+key);
 			configValues.put(key, override.get(key));
 		}
 	}
@@ -314,7 +330,8 @@ public class Config
 	{
 		if(key != null)
 		{
-			assert allConfigInfo.contains(key) : "Unknown configuration key ! "+key;
+			if(!allConfigInfo.contains(key))
+				throw new IllegalArgumentException("Unknown configuration key : "+key);
 			configValues.put(key, newValue);
 		}
 	}
