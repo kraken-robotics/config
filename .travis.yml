@@ -8,6 +8,7 @@ script :
     - mvn install
     - cd ../example
     - ant
+    - java -cp bin:../core/target/config-1.4.jar:$HOME/.m2/repository/org/ini4j/ini4j/0.5.4/ini4j-0.5.4.jar Example
 jdk : oraclejdk8
 notifications:
     slack: intech-sudparis:Z3xKQEmZT2a9BFBqouokQ6J7
