@@ -6,7 +6,9 @@
 package pfg.config;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +84,10 @@ public class Config
 	{
 		try
 		{
-			Ini inifile = new Ini(new File(configfile));
+			InputStream is = getClass().getClassLoader().getResourceAsStream(configfile);
+			if(is == null)
+				is = new FileInputStream(new File(configfile));
+			Ini inifile = new Ini(is);
 			if(profiles != null && profiles.length > 0)
 				for(String profile : profiles)
 				{
