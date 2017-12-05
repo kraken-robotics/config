@@ -85,8 +85,17 @@ public class Config
 		try
 		{
 			InputStream is = getClass().getClassLoader().getResourceAsStream(configfile);
-			if(is == null)
+			if(is != null)
+			{
+				if(verbose)
+					System.out.println("Loading config file : "+getClass().getClassLoader().getResource(configfile));
+			}
+			else
+			{
 				is = new FileInputStream(new File(configfile));
+				if(verbose)
+					System.out.println("Loading config file : "+System.getProperty("user.dir")+configfile);				
+			}
 			Ini inifile = new Ini(is);
 			if(profiles != null && profiles.length > 0)
 				for(String profile : profiles)
@@ -119,7 +128,7 @@ public class Config
 		catch(IOException e)
 		{
 			if(verbose)
-				System.err.println("Configuration loading error from : " + System.getProperty("user.dir") + " : " + e.getMessage()+". Default values loaded instead.");
+				System.err.println("Configuration loading error from " + System.getProperty("user.dir") + " : " + e.getMessage()+". Default values loaded instead.");
 		}
 	}
 	
