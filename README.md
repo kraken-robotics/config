@@ -8,16 +8,37 @@ The point of the configuration file is to change the configuration without recom
 
 The configuration file must consist of ```key = value``` lines. Commentaries are introduced with the ```#``` character. [Here is an config file example](https://raw.githubusercontent.com/PFGimenez/config/master/example/config_example.ini).
 
-## Downloading / compiling
+## Maven installation
+
+If you want to use this library in one of your maven project, add this to your pom.xml :
+
+    <repositories>
+        <repository>
+            <id>config-pfg-mvn-repo</id>
+            <url>https://raw.githubusercontent.com/PFGimenez/config/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+and
+
+    <dependency>
+        <groupId>pfg.config</groupId>
+        <artifactId>config</artifactId>
+        <version>[1.4,)</version>
+    </dependency>
+
+
+
+## Manual compilation
 
 [![Build Status](https://travis-ci.org/PFGimenez/config.svg?branch=master)](https://travis-ci.org/PFGimenez/config)
 
-You can find the latest compiled .jar here : https://github.com/PFGimenez/config/releases/download/v1.2/config-1.2.jar.
-
-Otherwise, you can compile it yourself. You will need a JDK and maven.
+You can compile it yourself. You will need a JDK and maven.
 
     $ git clone https://github.com/PFGimenez/config.git --depth 1
     $ cd config/core
     $ mvn install
-
-The jar file will be located in the `target` directory.
