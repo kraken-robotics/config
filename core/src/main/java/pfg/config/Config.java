@@ -103,7 +103,8 @@ public class Config
 					Section s = (Section) inifile.get(profile);
 					if(s == null)
 					{
-						System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
+						if(verbose)
+							System.err.println("Unknown config profile : "+profile+". Possible values are : "+inifile.keySet());
 						continue;
 					}
 
@@ -117,7 +118,7 @@ public class Config
 								ok = true;
 								break;
 							}
-						if(!ok)
+						if(!ok && verbose)
 							System.err.println("Unknown key : "+st);
 					}
 					
@@ -159,7 +160,8 @@ public class Config
 				return Integer.parseInt(s);
 		} catch(NumberFormatException e)
 		{
-			System.err.println(e);
+			if(verbose)
+				System.err.println(e);
 			return Integer.parseInt(nom.getDefaultValue().toString());
 		}
 		return null;
@@ -193,7 +195,8 @@ public class Config
 				return Short.parseShort(s);
 		} catch(NumberFormatException e)
 		{
-			System.err.println(e);
+			if(verbose)
+				System.err.println(e);
 			return Short.parseShort(nom.getDefaultValue().toString());
 		}
 		return null;
@@ -214,7 +217,8 @@ public class Config
 				return Byte.parseByte(s);
 		} catch(NumberFormatException e)
 		{
-			System.err.println(e);
+			if(verbose)
+				System.err.println(e);
 			return Byte.parseByte(nom.getDefaultValue().toString());
 		}		return null;
 	}
@@ -234,7 +238,8 @@ public class Config
 				return Long.parseLong(s);
 		} catch(NumberFormatException e)
 		{
-			System.err.println(e);
+			if(verbose)
+				System.err.println(e);
 			return Long.parseLong(nom.getDefaultValue().toString());
 		}
 		return null;
@@ -269,7 +274,8 @@ public class Config
 				return Double.parseDouble(s);
 		} catch(NumberFormatException e)
 		{
-			System.err.println(e);
+			if(verbose)
+				System.err.println(e);
 			return Double.parseDouble(nom.getDefaultValue().toString());
 		}
 		return null;
