@@ -94,7 +94,7 @@ public class Config
 			{
 				is = new FileInputStream(new File(configfile));
 				if(verbose)
-					System.out.println("Loading config file : "+System.getProperty("user.dir")+configfile);				
+					System.out.println("Loading config file : "+System.getProperty("user.dir")+"/"+configfile);
 			}
 			Ini inifile = new Ini(is);
 			if(profiles != null && profiles.length > 0)
