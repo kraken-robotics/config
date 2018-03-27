@@ -300,10 +300,16 @@ public class Config
 	 */
 	public void printChangedValues()
 	{
+		boolean any = false;
 		System.out.println("Configuration diff :");
 		for(ConfigInfo info : allConfigInfo)
 			if(!info.getDefaultValue().equals(configValues.get(info)))
+			{
 				System.out.println("  " + info + " = " + configValues.get(info) + " (default : "+info.getDefaultValue()+")");
+				any = true;
+			}
+		if(!any)
+			System.out.println("	(no difference)");
 	}
 
 	/**
