@@ -30,7 +30,7 @@ and
     <dependency>
         <groupId>pfg.config</groupId>
         <artifactId>config</artifactId>
-        <version>[1.4,)</version>
+        <version>1.4</version>
     </dependency>
 
 
