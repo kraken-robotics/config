@@ -10,15 +10,17 @@ The configuration file must consist of ```key = value``` lines. Commentaries are
 
 ## Maven installation
 
-If you want to use this library in one of your maven project, add this to your pom.xml :
+If you want to use this library in one of your maven project, add this to your `pom.xml`:
 
     <repositories>
         <repository>
-            <id>config-pfg-mvn-repo</id>
-            <url>https://raw.githubusercontent.com/PFGimenez/config/mvn-repo/</url>
+            <id>PFGimenez-Kraken</id>
+            <url>https://packagecloud.io/PFGimenez/Kraken/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
             <snapshots>
                 <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
             </snapshots>
         </repository>
     </repositories>
@@ -33,9 +35,7 @@ and
 
 
 
-## Manual compilation
-
-[![Build Status](https://travis-ci.org/PFGimenez/config.svg?branch=master)](https://travis-ci.org/PFGimenez/config)
+## Manual compilation [![Build Status](https://travis-ci.org/PFGimenez/config.svg?branch=master)](https://travis-ci.org/PFGimenez/config)
 
 You can compile it yourself. You will need a JDK and maven.
 
