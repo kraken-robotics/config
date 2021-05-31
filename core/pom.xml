@@ -55,7 +55,7 @@
    <repository>
      <id>github</id>
      <name>GitHub Kraken-robotics Apache Maven Packages</name>
-     <url>https://maven.pkg.github.com/kraken-robotics/dependency-injector</url>
+     <url>https://maven.pkg.github.com/kraken-robotics/config</url>
    </repository>
 </distributionManagement>
 

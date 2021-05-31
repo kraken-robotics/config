@@ -12,18 +12,19 @@ The configuration file must consist of ```key = value``` lines. Commentaries are
 
 If you want to use this library in one of your maven project, add this to your `pom.xml`:
 
-    <repositories>
+      <repositories>
         <repository>
-            <id>PFGimenez-Kraken</id>
-            <url>https://packagecloud.io/PFGimenez/Kraken/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
         </repository>
-    </repositories>
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/kraken-robotics/*</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
 
 and
 
